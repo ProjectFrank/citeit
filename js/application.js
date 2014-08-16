@@ -3,21 +3,7 @@ $(document).ready(function() {
     function encodeTerm(term) {
 	var res = term.replace(/^\s+|\s+$/g, '');
 	return res.replace(/\s+/g, "+");
-    }
-    
-    function buildBullet(book) {
-	var list = "<ul class=\"suggestions\">";
-	if (book.title)
-	    list += "<li class=\"title\">" + book.title + "</li>";
-	if (book.author_name)
-	    list += "<li class=\"author\">" + book.author_name + "</li>";
-	if (book.cover_i) {
-	    var cover_url = "http://covers.openlibrary.org/b/id/" + book.cover_i + "-S.jpg";
-	    list += "<li class=\"cover\"><img src=\"" + cover_url + "\"/></li>";
-	}
-	list += "</ul>";
-	return list;
-    }
+    }    
 
     function processData(data) {
 	if ("docs" in data) {
@@ -39,12 +25,12 @@ $(document).ready(function() {
     var citebox = $("div.citebox");
     var resultsTemplate = Handlebars.compile($("#searchresults-template").html());
     var pageselectTemplate = Handlebars.compile($("#pageselect-template").html());
+    var citeboxTemplate = Handlebars.compile($("#citebox-template").html());
+
     $("#titlesearch").on("keyup", function() {
 	var thisHolder = $(this);
-	var suggestionBox = $(this).next();
 	if (thisHolder.val().length < 2) {
 	    resultsbox.empty();
-	    suggestionBox.empty();
 	    return;
 	}
 	if (request)
@@ -57,12 +43,6 @@ $(document).ready(function() {
 		console.log("ajax sent");
 		books = processData(data);
 
-		// suggestionBox.empty();
-		// var source = $("#books-template").html();
-		// var template = Handlebars.compile(source);
-		// var html = template(books);
-		// suggestionBox.append(html);
-		// suggestionBox.slideDown();
 		thisHolder.removeClass("loading");
 		
 		resultsbox.empty();
@@ -96,8 +76,7 @@ $(document).ready(function() {
 		book.author = book.authors[0].name;
 	    if (book.publishers)
 		book.publisher = book.publishers[0].name;
-	    var source = $("#citebox-template").html();
-	    var html = Handlebars.compile(source)(book);
+	    var html = citeboxTemplate(book);
 	    citebox.empty();
 	    citebox.append(html);
 	    $("div.resultsbox").slideUp();
@@ -109,12 +88,8 @@ $(document).ready(function() {
     citebox.on("click", "button", function() {
 	citebox.slideUp();
 	resultsbox.slideDown();
-    });	
-	
-    $("html").on("click", function() {
-	$(".suggestions-container").slideUp();
     });
-
+	
     resultsbox.on("click", ".pageselector", function() {
 	var offset = String((+$(this).data("page") - 1) * 5);
 	var url = "http://openlibrary.org/search.json?q=" + encodeTerm($("#titlesearch").val())+"&limit=5&offset=" + offset;
@@ -128,32 +103,4 @@ $(document).ready(function() {
 	    $("#titlesearch").removeClass("loading");
 	});
     });
-    // $("#authorsearch").on("keyup", function() {
-    // 	var thisHolder = $(this);
-    // 	var suggestionBox = $(this).next();
-    // 	if (thisHolder.val().length < 2) {
-    // 	    suggestionBox.empty();
-    // 	    return;
-    // 	}
-    // 	if (request)
-    // 	    request.abort();
-    // 	clearTimeout(timer);
-    // 	timer = setTimeout(function() {
-    // 	    var url = "http://openlibrary.org/search/authors.json?q=" + encodeTerm(thisHolder.val())+"&limit=5";
-    // 	    var authors = [];
-    // 	    thisHolder.addClass("loading");
-    // 	    request = $.getJSON(url, function(data) {
-    // 		authors = data.docs.map(function(author) {
-    // 		    return author;
-    // 		});
-    // 		suggestionBox.empty();
-    // 		var source = $("#authors-template").html();
-    // 		var template = Handlebars.compile(source);
-    // 		var html = template(authors);
-    // 		suggestionBox.append(html);
-    // 		suggestionBox.slideDown();
-    // 		thisHolder.removeClass("loading");
-    // 	    });	    
-    // 	}, 500);
-    // });
 });

@@ -47,8 +47,10 @@
     <script id="citebox-template" type="text/x-handlebars-template">
       <label for="citetitle">Title:</label>
       <input id="citetitle" value="{{title}}">
-      <label for="citeauthor">Author:</label>
-      <input id="citeauthor" value="{{author}}">
+      {{#each authors}}
+      <label>Author:</label>
+      <input class="citeauthor" value="{{name}}">
+      {{/each}}
       <label for="citepublisher">Publisher:</label>
       <input id="citepublisher" value="{{publisher}}">
       <label for="citepubdate">Publish date:</label>
