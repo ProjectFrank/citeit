@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="style.css">
+    <title>OpenLib API Practice</title>
+    <script id="books-template" type="text/x-handlebars-template">
+	{{#each this}}
+    	<li class="suggestion" data-key="{{key}}">
+    	  <div class="title">{{title}}</div>
+    	  <div class="author">{{author_name}}</div>
+    	  <div class="cover"><img src="http://covers.openlibrary.org/b/id/{{cover_i}}-S.jpg"/></div>
+    	</li>
+	{{/each}}
+    </script>
+        <script id="authors-template" type="text/x-handlebars-template">
+	{{#each this}}
+    	<li class="suggestion" data-key="{{name}}">
+	  <div class="author">{{name}}</div>
+	  <div class="cover"><img src="http://covers.openlibrary.org/a/olid/{{key}}-S.jpg"/></div>
+    	</li>
+	{{/each}}
+    </script>
+    <script id="searchresults-template" type="text/x-handlebars-template">
+      <ul>
+	<li>
+	  <div class="title">Title</div>
+	  <div class="author">Author</div>
+	  <div class="cover"></div>
+	</li>
+	{{#each this}}
+	<li data-key="{{key}}">
+	  <div class="title">{{title}}</div>
+	  <div class="author">{{author_name}}</div>
+	  <div class="cover"><img src="http://covers.openlibrary.org/b/id/{{cover_i}}-S.jpg"/>
+</div>
+	</li>
+	{{/each}}	
+      </ul>
+    </script>
+
+    <script id="pageselect-template" type="text/x-handlebars-template">
+      <div class="pageselect clearfix">
+	{{#each this}}<div class="pageselector" data-page="{{page}}">{{page}}</div>{{/each}}
+      </div>
+    </script>
+    <script id="citebox-template" type="text/x-handlebars-template">
+      <label for="citetitle">Title:</label>
+      <input id="citetitle" value="{{title}}">
+      <label for="citeauthor">Author:</label>
+      <input id="citeauthor" value="{{author}}">
+      <label for="citepublisher">Publisher:</label>
+      <input id="citepublisher" value="{{publisher}}">
+      <label for="citepubdate">Publish date:</label>
+      <input id="citepubdate" value="{{publish_date}}">
+      <p>Pages:</p>
+      <label for="citepagestart">Start:</label>
+      <input id="citepagestart">
+      <label for="citepageend">End:</label>
+      <input id="citepageend">
+      <button id="backtoresults">Back to results</button>
+      
+    </script>
+  </head>
+  <body>
+    <div class="searchbox">
+      <label for="titlesearch">Search by title:</label>
+      <input id="titlesearch" placeholder="Search for the name of your book here.">
+      <ul class="suggestions-container titlesearch clearfix"></ul>
+      <!-- <label for="authorsearch">Search by author:</label> -->
+      <!-- <input id="authorsearch" placeholder="Search for the name of the author here."> -->
+      <!-- <ul class="suggestions-container authorsearch clearfix"></ul> -->
+    </div>
+    <div class="citebox"></div>
+    <div class="resultsbox"></div>
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/handlebars.js"></script>
+    <script src="js/application.js"></script>
+  </body>
+</html>

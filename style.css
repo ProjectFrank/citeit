@@ -1,0 +1,173 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    padding: 100px 0;
+    background: #eef;
+}
+
+div.searchbox {
+    width: 50%;
+    margin: auto;
+    position: relative;
+    background: #fff;
+}
+
+input {
+    width: 60%;
+    margin: 2%;
+    border: 0;
+    padding: 0;
+    background: #eee;
+}
+
+label {
+    width: 20%;
+    display: inline-block;
+    margin: 2%;
+    text-align: right;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.suggestions-container {
+    display: none;
+    position: absolute;
+    width: 60%;
+    background: #fff;
+}
+
+ul.suggestions-container.titlesearch {
+    top: 29px;
+    right: 84px;
+}
+
+ul.suggestions-container.authorsearch {
+    top: 87px;
+    right: 84px;
+}
+
+li.suggestion {
+    padding: 5px 0;
+    margin: 0;
+    color: #222;
+    width: 100%;
+    overflow: hidden;
+}
+
+.suggestion div {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+div.title {
+    width: 60%;
+}
+
+div.author {
+    width: 30%;
+}
+
+div.cover {
+    width: 10%;
+    float: right;
+}
+
+li:hover {
+    background: #aaa;
+}
+
+.loading {
+    background-image: url(images/loading_icon.gif);
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+}
+
+div.resultsbox {
+    clear: left;
+    display: none;
+    width: 50%;
+    margin: auto;
+    background: #fff;
+}
+
+.resultsbox li>div {
+    display: block;
+    float: left;
+    height: 58px;
+    line-height: 58px;
+}
+
+.resultsbox li {
+    overflow: hidden;
+    height: 58px;
+}
+
+.resultsbox li:first-child {
+    font-weight: bold;
+}
+
+.resultsbox li:first-child:hover {
+    background: #fff;
+}
+
+div.citebox {
+    display: none;
+    clear: both;
+    margin: auto;
+    width: 50%;
+    background: #fff;
+}
+
+.citebox label {
+    width: 30%;
+}
+
+.citebox input {
+    width: 55%;
+}
+
+#backtoresults {
+    display: block;
+    margin: auto;
+}
+
+.pageselect {
+    border: 1px solid black;
+    border-right: 0;
+    border-left: 0;
+    text-align: center;
+}
+
+.pageselector {
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+}
+
+.pageselector:hover {
+    background: #aaa;
+}
+
+.highlight {
+    background: #ccc;
+}
+
+/* clearfix */
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
