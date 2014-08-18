@@ -6,6 +6,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     padding: 100px 0;
     background: #eef;
+    perspective: 700px;
 }
 
 div.searchbox {
@@ -36,38 +37,7 @@ ul {
     margin: 0;
 }
 
-ul.suggestions-container {
-    display: none;
-    position: absolute;
-    width: 60%;
-    background: #fff;
-}
-
-ul.suggestions-container.titlesearch {
-    top: 29px;
-    right: 84px;
-}
-
-ul.suggestions-container.authorsearch {
-    top: 87px;
-    right: 84px;
-}
-
-li.suggestion {
-    padding: 5px 0;
-    margin: 0;
-    color: #222;
-    width: 100%;
-    overflow: hidden;
-}
-
-.suggestion div {
-    display: block;
-    float: left;
-    margin: 0;
-    padding: 0;
-}
-
+/* Search results formatting */
 div.title {
     width: 60%;
 }
@@ -85,18 +55,13 @@ li:hover {
     background: #aaa;
 }
 
-.loading {
-    background-image: url(images/loading_icon.gif);
-    background-repeat: no-repeat;
-    background-position-x: 100%;
-}
-
 div.resultsbox {
-    clear: left;
-    display: none;
-    width: 50%;
-    margin: auto;
+    width: 100%;
     background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
 }
 
 .resultsbox li>div {
@@ -109,6 +74,7 @@ div.resultsbox {
 .resultsbox li {
     overflow: hidden;
     height: 58px;
+    padding: 5px 0;
 }
 
 .resultsbox li:first-child {
@@ -119,12 +85,22 @@ div.resultsbox {
     background: #fff;
 }
 
+/* Loading spinner */
+.loading {
+    background-image: url(images/loading_icon.gif);
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+}
+
+
 div.citebox {
-    display: none;
-    clear: both;
-    margin: auto;
-    width: 50%;
+    transform: rotateY(180deg);
     background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    backface-visibility: hidden;
 }
 
 .citebox label {
@@ -140,6 +116,7 @@ div.citebox {
     margin: auto;
 }
 
+/* Pageselect styling */
 .pageselect {
     border: 1px solid black;
     border-right: 0;
@@ -159,6 +136,23 @@ div.citebox {
 
 .highlight {
     background: #ccc;
+}
+
+/* Flip effect stuff */
+.card {
+    width: 50%;
+    margin: auto;
+    transition: all 1s ease;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.flip {
+    transform: rotateY(180deg);
+}
+
+.flip360 {
+    transform: rotateY(360deg);
 }
 
 /* clearfix */

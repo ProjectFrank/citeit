@@ -1,10 +1,14 @@
 $(document).ready(function() {
-    
+
+    // Encode the search term for use with the openlibrary search API
+    // Remove leading and trailing whitespace, replace whitespace between words
+    // with a plus sign (+)
     function encodeTerm(term) {
 	var res = term.replace(/^\s+|\s+$/g, '');
 	return res.replace(/\s+/g, "+");
     }    
 
+    // Process the book data so that it is suitable for use with Handlebars.js
     function processData(data) {
 	if ("docs" in data) {
 	    var processed = data.docs.map(function(doc) {
@@ -19,77 +23,102 @@ $(document).ready(function() {
     }
 
     var timer;
+
+    // Declare request variable to later refer to JSON request and abort it.
     var request;
+
+    // Declare books variable to access book data in all functions.
     var books;
+
+    // Declare and initialize jQuery elements
     var resultsbox = $("div.resultsbox");
     var citebox = $("div.citebox");
+    var card = $("div.card");
+
+    // Compile Handlebars.js templates
     var resultsTemplate = Handlebars.compile($("#searchresults-template").html());
     var pageselectTemplate = Handlebars.compile($("#pageselect-template").html());
     var citeboxTemplate = Handlebars.compile($("#citebox-template").html());
 
+
+    // Function that executes search with keystrokes in the search input.
     $("#titlesearch").on("keyup", function() {
 	var thisHolder = $(this);
 	if (thisHolder.val().length < 2) {
 	    resultsbox.empty();
+	    card.removeClass("flip");
 	    return;
 	}
+
+	// Abort previous request before next is sent out.
 	if (request)
 	    request.abort();
+
+	// Timer calls function if no keystrokes for 500ms
 	clearTimeout(timer);
 	timer = setTimeout(function() {
 	    var url = "http://openlibrary.org/search.json?q=" + encodeTerm(thisHolder.val())+"&limit=5&offset=0";
 	    thisHolder.addClass("loading");
 	    request = $.getJSON(url, function(data) {
-		console.log("ajax sent");
 		books = processData(data);
-
 		thisHolder.removeClass("loading");
-		
+
+		// Remove search results before new search is made
 		resultsbox.empty();
-		citebox.slideUp();
+
+		// Unflip the card if it is not already unflipped
+		card.removeClass("flip");
+
+		// Add new search results
 		resultsbox.append(resultsTemplate(books));
+
+		// Calculate number of pages of search results (5 per page)
 		var numPages = Math.min(10, Math.ceil(data.numFound / 5));
+
+		// Create array of objects for Handlebars.js template
 		var pageArray = [];
 		for (var i = 1; i <= numPages; i++)
 		    pageArray.push({page: String(i)});
 		resultsbox.append(pageselectTemplate(pageArray));
-		$(".pageselector").first().addClass("highlight");
-		if (books.length > 0)
-		    resultsbox.slideDown();	
+		$(".pageselector").first().addClass("highlight");	
 	    });
 	}, 500);
     });
 
-    var editionKey;
-    var book;
+
+
+
+    // Function handling what happens when a search result is clicked
     $("div.resultsbox").on("click", "li", function() {
+	
+	// Determine which book was clicked, fetch book data from API using its key
 	var key =$(this).data("key");
-	books.forEach(function(doc) {
-	    if (key == doc.key)
-		editionKey = key;
-	});
-	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+editionKey+"&jscmd=data";
-	$("#titlesearch").addClass("loading");
+	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+ key +"&jscmd=data";
+	$("#titlesearch").addClass("loading");	
 	$.getScript(url, function() {
-	    book = _OLBookInfo["OLID:"+editionKey];
+	    var book = _OLBookInfo["OLID:" + key];
 	    if (book.authors)
 		book.author = book.authors[0].name;
 	    if (book.publishers)
 		book.publisher = book.publishers[0].name;
-	    var html = citeboxTemplate(book);
+
+	    // Empty and generate new citebox content
 	    citebox.empty();
-	    citebox.append(html);
-	    $("div.resultsbox").slideUp();
+	    citebox.append(citeboxTemplate(book));
+
+	    // Reveal citebox
+	    card.addClass("flip");
+
 	    $("#titlesearch").removeClass("loading");
-	    citebox.slideDown();
 	});
     });
 
+    // Listener function for "Back to results" button
     citebox.on("click", "button", function() {
-	citebox.slideUp();
-	resultsbox.slideDown();
+	card.removeClass("flip");
     });
-	
+
+    // Listener function for page selector in search results
     resultsbox.on("click", ".pageselector", function() {
 	var offset = String((+$(this).data("page") - 1) * 5);
 	var url = "http://openlibrary.org/search.json?q=" + encodeTerm($("#titlesearch").val())+"&limit=5&offset=" + offset;
@@ -97,8 +126,11 @@ $(document).ready(function() {
 	$(this).addClass("highlight");
 	$("#titlesearch").addClass("loading");
 	$.getJSON(url, function(data) {
+	    
+	    // Use remove instead of empty in this instance to avoid removing the page selector within resultsbox
 	    resultsbox.find("ul").remove();
 	    books = processData(data);
+	    // Add search results to beginning of resultsbox, before pageselector
 	    resultsbox.prepend(resultsTemplate(books));
 	    $("#titlesearch").removeClass("loading");
 	});
