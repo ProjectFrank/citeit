@@ -13,7 +13,6 @@ $(document).ready(function() {
 	if ("docs" in data) {
 	    var processed = data.docs.map(function(doc) {
 		if ("edition_key" in doc) {
-		    doc.key = doc.edition_key[0];
 		    return doc;
 		}
 		return {};
@@ -39,7 +38,10 @@ $(document).ready(function() {
     var resultsTemplate = Handlebars.compile($("#searchresults-template").html());
     var pageselectTemplate = Handlebars.compile($("#pageselect-template").html());
     var citeboxTemplate = Handlebars.compile($("#citebox-template").html());
-
+    var editionselectTemplate = Handlebars.compile($("#editionselect-template").html());
+    
+    // Declare variable ensuring that slideDown effect only occurs once.
+    var slid;
 
     // Function that executes search with keystrokes in the search input.
     $("#titlesearch").on("keyup", function() {
@@ -80,7 +82,11 @@ $(document).ready(function() {
 		for (var i = 1; i <= numPages; i++)
 		    pageArray.push({page: String(i)});
 		resultsbox.append(pageselectTemplate(pageArray));
-		$(".pageselector").first().addClass("highlight");	
+		$(".pageselector").first().addClass("highlight");
+		if(!slid) {
+		    resultsbox.slideDown();
+		    slid=true;
+		}
 	    });
 	}, 500);
     });
@@ -92,23 +98,38 @@ $(document).ready(function() {
     $("div.resultsbox").on("click", "li", function() {
 	
 	// Determine which book was clicked, fetch book data from API using its key
-	var key =$(this).data("key");
-	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+ key +"&jscmd=data";
-	$("#titlesearch").addClass("loading");	
+	var key = $(this).data("key");
+	var selectedBook = books[+key];
+	var olid = selectedBook.edition_key[0];
+	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+ olid +"&jscmd=data";
+	$("#titlesearch").addClass("loading");
 	$.getScript(url, function() {
-	    var book = _OLBookInfo["OLID:" + key];
-	    if (book.authors)
-		book.author = book.authors[0].name;
-	    if (book.publishers)
-		book.publisher = book.publishers[0].name;
-
+	    var book = _OLBookInfo["OLID:" + olid];
+	    var edition_keys = selectedBook.edition_key.map(function(editionKey) {
+		return {"key": editionKey};
+	    });
 	    // Empty and generate new citebox content
 	    citebox.empty();
+	    citebox.append(editionselectTemplate(edition_keys));
 	    citebox.append(citeboxTemplate(book));
 
 	    // Reveal citebox
 	    card.addClass("flip");
 
+	    $("#titlesearch").removeClass("loading");
+	});
+    });
+
+    // Function handling edition selector in citebox
+    $("div.citebox").on("change", "select", function() {
+	var olid = $(this).val();
+	$("#titlesearch").addClass("loading");
+	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+ olid +"&jscmd=data";
+	$.getScript(url, function() {
+	    var book = _OLBookInfo["OLID:" + olid];
+	    $("form").remove();
+	    $("button").remove();
+	    citebox.append(citeboxTemplate(book));
 	    $("#titlesearch").removeClass("loading");
 	});
     });
@@ -135,4 +156,5 @@ $(document).ready(function() {
 	    $("#titlesearch").removeClass("loading");
 	});
     });
+    
 });

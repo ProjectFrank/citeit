@@ -4,38 +4,24 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="style.css">
     <title>OpenLib API Practice</title>
-    <script id="books-template" type="text/x-handlebars-template">
-	{{#each this}}
-    	<li class="suggestion" data-key="{{key}}">
-    	  <div class="title">{{title}}</div>
-    	  <div class="author">{{author_name}}</div>
-    	  <div class="cover"><img src="http://covers.openlibrary.org/b/id/{{cover_i}}-S.jpg"/></div>
-    	</li>
-	{{/each}}
-    </script>
-        <script id="authors-template" type="text/x-handlebars-template">
-	{{#each this}}
-    	<li class="suggestion" data-key="{{name}}">
-	  <div class="author">{{name}}</div>
-	  <div class="cover"><img src="http://covers.openlibrary.org/a/olid/{{key}}-S.jpg"/></div>
-    	</li>
-	{{/each}}
-    </script>
+
     <script id="searchresults-template" type="text/x-handlebars-template">
       <ul>
 	<li>
+	  <div class="cover"></div>
 	  <div class="title">Title</div>
 	  <div class="author">Author</div>
-	  <div class="cover"></div>
+	  <div class="language">Language</div>
 	</li>
 	{{#each this}}
-	<li data-key="{{key}}">
+	<li data-key="{{@index}}">
+	  <div class="cover"><img src="http://covers.openlibrary.org/b/id/{{cover_i}}-S.jpg"/></div>
 	  <div class="title">{{title}}</div>
 	  <div class="author">{{author_name}}</div>
-	  <div class="cover"><img src="http://covers.openlibrary.org/b/id/{{cover_i}}-S.jpg"/>
+	  <div class="language">{{language}}</div>
 </div>
 	</li>
-	{{/each}}	
+	{{/each}}
       </ul>
     </script>
 
@@ -44,24 +30,34 @@
 	{{#each this}}<div class="pageselector" data-page="{{page}}">{{page}}</div>{{/each}}
       </div>
     </script>
+    <script id="editionselect-template" type="text/x-handlebars-template">
+      <select>
+	{{#each this}}
+	<option data-key="{{key}}">{{key}}</option>
+	{{/each}}
+      </select>
+    </script>
     <script id="citebox-template" type="text/x-handlebars-template">
-      <label for="citetitle">Title:</label>
-      <input id="citetitle" value="{{title}}">
-      {{#each authors}}
-      <label>Author:</label>
-      <input class="citeauthor" value="{{name}}">
-      {{/each}}
-      <label for="citepublisher">Publisher:</label>
-      <input id="citepublisher" value="{{publisher}}">
-      <label for="citepubdate">Publish date:</label>
-      <input id="citepubdate" value="{{publish_date}}">
-      <p>Pages:</p>
-      <label for="citepagestart">Start:</label>
-      <input id="citepagestart">
-      <label for="citepageend">End:</label>
-      <input id="citepageend">
-      <button id="backtoresults">Back to results</button>
-      
+      <form>
+	<label for="citetitle">Title:</label>
+	<input id="citetitle" value="{{title}}">
+	{{#each authors}}
+	<label>Author:</label>
+	<input class="citeauthor" value="{{name}}">
+	{{/each}}
+	{{#each publishers}}
+	<label for="citepublisher">Publisher:</label>
+	<input id="citepublisher" value="{{name}}">
+	{{/each}}
+	<label for="citepubdate">Publish date:</label>
+	<input id="citepubdate" value="{{publish_date}}">
+	<p>Pages:</p>
+	<label for="citepagestart">Start:</label>
+	<input id="citepagestart">
+	<label for="citepageend">End:</label>
+	<input id="citepageend">
+      </form>
+      <button id="backtoresults">Back to results</button>      
     </script>
   </head>
   <body>

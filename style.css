@@ -10,7 +10,7 @@ body {
 }
 
 div.searchbox {
-    width: 50%;
+    width: 80%;
     margin: auto;
     position: relative;
     background: #fff;
@@ -39,11 +39,15 @@ ul {
 
 /* Search results formatting */
 div.title {
-    width: 60%;
+    width: 40%;
 }
 
 div.author {
     width: 30%;
+}
+
+div.language {
+    width: 20%;
 }
 
 div.cover {
@@ -57,11 +61,13 @@ li:hover {
 
 div.resultsbox {
     width: 100%;
+    padding: 2%;
     background: #fff;
     position: absolute;
     top: 0;
     left: 0;
     backface-visibility: hidden;
+    display: none;
 }
 
 .resultsbox li>div {
@@ -94,6 +100,8 @@ div.resultsbox {
 
 
 div.citebox {
+    width: 100%;
+    padding: 2%;
     transform: rotateY(180deg);
     background: #fff;
     position: absolute;
@@ -140,7 +148,7 @@ div.citebox {
 
 /* Flip effect stuff */
 .card {
-    width: 50%;
+    width: 80%;
     margin: auto;
     transition: all 1s ease;
     transform-style: preserve-3d;
