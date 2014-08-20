@@ -4,31 +4,38 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    padding: 100px 0;
     background: #eef;
     perspective: 700px;
 }
 
-div.searchbox {
-    width: 80%;
-    margin: auto;
-    position: relative;
-    background: #fff;
-}
-
 input {
-    width: 60%;
-    margin: 2%;
-    border: 0;
-    padding: 0;
-    background: #eee;
+    font-family: 'Open Sans';
+    padding: 1rem;
 }
 
-label {
-    width: 20%;
-    display: inline-block;
-    margin: 2%;
-    text-align: right;
+.front {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    backface-visibility: hidden;
+}
+
+div.searchbox {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    background: #eef;
+    padding: 2rem;
+    backface-visibility: hidden;
+}
+
+.searchbox input {
+    width: 50%;
+    margin: auto;
+    font-size: 1rem;
+    text-align: center;
 }
 
 ul {
@@ -39,11 +46,11 @@ ul {
 
 /* Search results formatting */
 div.title {
-    width: 40%;
+    width: 50%;
 }
 
 div.author {
-    width: 30%;
+    width: 40%;
 }
 
 div.language {
@@ -55,19 +62,18 @@ div.cover {
     float: right;
 }
 
-li:hover {
+.resultsbox li:hover {
     background: #aaa;
 }
 
 div.resultsbox {
     width: 100%;
     padding: 2%;
-    background: #fff;
     position: absolute;
-    top: 0;
+    top: 122px;
     left: 0;
-    backface-visibility: hidden;
     display: none;
+    backface-visibility: hidden;
 }
 
 .resultsbox li>div {
@@ -81,6 +87,7 @@ div.resultsbox {
     overflow: hidden;
     height: 58px;
     padding: 5px 0;
+    background: #fff;
 }
 
 .resultsbox li:first-child {
@@ -98,7 +105,7 @@ div.resultsbox {
     background-position: 100% 0;
 }
 
-
+/* citebox styling */
 div.citebox {
     width: 100%;
     padding: 2%;
@@ -111,12 +118,39 @@ div.citebox {
     backface-visibility: hidden;
 }
 
-.citebox label {
-    width: 30%;
+.citebox label, input {
+    display: block;
+    width: 80%;
 }
 
-.citebox input {
-    width: 55%;
+.citebox img {
+    width: 50%;
+    float: left;
+}
+
+.full-line {
+    width: 100%;
+}
+
+.full-line>input, .full-line>label {
+    margin: 2%;
+}
+
+.firstnamebox, .lastnamebox {
+    display: inline-block;
+    width: 35%;
+    margin: 2%;
+}
+
+.volume, .edition, .pages {
+    display: inline-block;
+    width: 23%;
+    margin: 2%;
+}
+
+.buttonbox {
+    padding: 2rem;
+    clear: both;
 }
 
 #backtoresults {
@@ -144,6 +178,11 @@ div.citebox {
 
 .highlight {
     background: #ccc;
+}
+
+form {
+    width: 50%;
+    float: right;
 }
 
 /* Flip effect stuff */

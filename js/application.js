@@ -5,7 +5,8 @@ $(document).ready(function() {
     // with a plus sign (+)
     function encodeTerm(term) {
 	var res = term.replace(/^\s+|\s+$/g, '');
-	return res.replace(/\s+/g, "+");
+	var res2 = res.replace(/\s+/g, "+");
+	return res2.replace("'", "%27");
     }    
 
     // Process the book data so that it is suitable for use with Handlebars.js
@@ -21,13 +22,31 @@ $(document).ready(function() {
 	}		    
     }
 
+    function processBook(book) {
+	if ("authors" in book) {
+	    book.authors = book.authors.map(function(author) {
+		var name = author.name;
+		var lastNameIndex = name.search(/\w+$/);
+		var lastName = name.substring(lastNameIndex);
+		var firstName = name.substring(0, lastNameIndex);
+		firstName = firstName.replace(/^\s+|\s+$/g, '');
+		return {"firstName": firstName, "lastName": lastName};
+	    });
+	}
+	if ("publish_date" in book) {
+	    var indexOfYear = book.publish_date.search(/\d{4}/);
+	    book.publish_year = book.publish_date.substring(indexOfYear, indexOfYear + 4);
+	}
+	return book;
+    }
+
     var timer;
 
     // Declare request variable to later refer to JSON request and abort it.
     var request;
 
     // Declare books variable to access book data in all functions.
-    var books;
+    var booksWithPics;
 
     // Declare and initialize jQuery elements
     var resultsbox = $("div.resultsbox");
@@ -38,7 +57,6 @@ $(document).ready(function() {
     var resultsTemplate = Handlebars.compile($("#searchresults-template").html());
     var pageselectTemplate = Handlebars.compile($("#pageselect-template").html());
     var citeboxTemplate = Handlebars.compile($("#citebox-template").html());
-    var editionselectTemplate = Handlebars.compile($("#editionselect-template").html());
     
     // Declare variable ensuring that slideDown effect only occurs once.
     var slid;
@@ -52,42 +70,92 @@ $(document).ready(function() {
 	    return;
 	}
 
-	// Abort previous request before next is sent out.
-	if (request)
-	    request.abort();
 
 	// Timer calls function if no keystrokes for 500ms
 	clearTimeout(timer);
 	timer = setTimeout(function() {
-	    var url = "http://openlibrary.org/search.json?q=" + encodeTerm(thisHolder.val())+"&limit=5&offset=0";
+	    // Declare variables accessible to all callback functions
+	    booksWithPics = [];
+	    var numBooks = 0;
+	    var offset = 0;
+	    var numFound;
+	    var url = "http://openlibrary.org/search.json?q=" + encodeTerm(thisHolder.val())+"&limit=20&offset=";
+
+	    // Add loading animation
 	    thisHolder.addClass("loading");
-	    request = $.getJSON(url, function(data) {
-		books = processData(data);
-		thisHolder.removeClass("loading");
 
-		// Remove search results before new search is made
-		resultsbox.empty();
+	    // Send JSON request
+	    console.log("New request sent");
+	    request = $.getJSON(url + String(offset)).then(success).then(compile, fail);
 
-		// Unflip the card if it is not already unflipped
+	    // Function called if success is done
+	    function compile() {
 		card.removeClass("flip");
-
-		// Add new search results
-		resultsbox.append(resultsTemplate(books));
-
-		// Calculate number of pages of search results (5 per page)
-		var numPages = Math.min(10, Math.ceil(data.numFound / 5));
-
-		// Create array of objects for Handlebars.js template
-		var pageArray = [];
-		for (var i = 1; i <= numPages; i++)
-		    pageArray.push({page: String(i)});
-		resultsbox.append(pageselectTemplate(pageArray));
-		$(".pageselector").first().addClass("highlight");
-		if(!slid) {
+		resultsbox.empty();
+		resultsbox.append(resultsTemplate(booksWithPics));
+		if (!slid) {
 		    resultsbox.slideDown();
-		    slid=true;
+		    slid = true;
 		}
-	    });
+		thisHolder.removeClass("loading");
+	    }
+	    
+	    // Function called if success is rejected
+	    function fail() {
+		offset += 20;
+		// Call everything again and again until success is done
+		return $.getJSON(url + String(offset)).then(success).then(compile, fail);
+	    }
+	    
+	    function success(data) {
+		var deferred = $.Deferred();
+		numFound = data.numFound;
+		var books = processData(data);
+		for(var i = 0, j = books.length; i < j; i++) {
+		    if ("cover_i" in books[i]) {
+			booksWithPics.push(books[i])
+		    }
+		    if (booksWithPics.length == 10) {
+			i = j;
+			deferred.resolve();
+			return deferred.promise();
+		    }
+		    console.log(i);
+		}
+		if (offset + 20 > numFound)
+		    deferred.resolve();
+		else if (booksWithPics.length < 10)
+		    deferred.reject();
+		return deferred.promise();
+	    }
+		    
+	    // request = $.getJSON(url, function(data) {
+	    // 	books = processData(data);
+	    // 	thisHolder.removeClass("loading");
+
+	    // 	// Remove search results before new search is made
+	    // 	resultsbox.empty();
+
+	    // 	// Unflip the card if it is not already unflipped
+	    // 	card.removeClass("flip");
+
+	    // 	// Add new search results
+	    // 	resultsbox.append(resultsTemplate(books));
+
+	    // 	// Calculate number of pages of search results (5 per page)
+	    // 	var numPages = Math.min(10, Math.ceil(data.numFound / 5));
+
+	    // 	// Create array of objects for Handlebars.js template
+	    // 	var pageArray = [];
+	    // 	for (var i = 1; i <= numPages; i++)
+	    // 	    pageArray.push({page: String(i)});
+	    // 	resultsbox.append(pageselectTemplate(pageArray));
+	    // 	$(".pageselector").first().addClass("highlight");
+	    // 	if(!slid) {
+	    // 	    resultsbox.slideDown();
+	    // 	    slid=true;
+	    // 	}
+	    // });
 	}, 500);
     });
 
@@ -99,37 +167,23 @@ $(document).ready(function() {
 	
 	// Determine which book was clicked, fetch book data from API using its key
 	var key = $(this).data("key");
-	var selectedBook = books[+key];
+	var selectedBook = booksWithPics[+key];
 	var olid = selectedBook.edition_key[0];
 	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+ olid +"&jscmd=data";
 	$("#titlesearch").addClass("loading");
 	$.getScript(url, function() {
-	    var book = _OLBookInfo["OLID:" + olid];
+	    var book = processBook(_OLBookInfo["OLID:" + olid]);
 	    var edition_keys = selectedBook.edition_key.map(function(editionKey) {
 		return {"key": editionKey};
 	    });
 	    // Empty and generate new citebox content
 	    citebox.empty();
-	    citebox.append(editionselectTemplate(edition_keys));
+	    citebox.append("<img src=\"http://covers.openlibrary.org/b/id/" + selectedBook["cover_i"] + "-L.jpg\"/>");
 	    citebox.append(citeboxTemplate(book));
 
 	    // Reveal citebox
 	    card.addClass("flip");
 
-	    $("#titlesearch").removeClass("loading");
-	});
-    });
-
-    // Function handling edition selector in citebox
-    $("div.citebox").on("change", "select", function() {
-	var olid = $(this).val();
-	$("#titlesearch").addClass("loading");
-	var url = "https://openlibrary.org/api/books?bibkeys=OLID:"+ olid +"&jscmd=data";
-	$.getScript(url, function() {
-	    var book = _OLBookInfo["OLID:" + olid];
-	    $("form").remove();
-	    $("button").remove();
-	    citebox.append(citeboxTemplate(book));
 	    $("#titlesearch").removeClass("loading");
 	});
     });

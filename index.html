@@ -11,15 +11,12 @@
 	  <div class="cover"></div>
 	  <div class="title">Title</div>
 	  <div class="author">Author</div>
-	  <div class="language">Language</div>
 	</li>
 	{{#each this}}
 	<li data-key="{{@index}}">
 	  <div class="cover"><img src="http://covers.openlibrary.org/b/id/{{cover_i}}-S.jpg"/></div>
 	  <div class="title">{{title}}</div>
 	  <div class="author">{{author_name}}</div>
-	  <div class="language">{{language}}</div>
-</div>
 	</li>
 	{{/each}}
       </ul>
@@ -30,45 +27,69 @@
 	{{#each this}}<div class="pageselector" data-page="{{page}}">{{page}}</div>{{/each}}
       </div>
     </script>
-    <script id="editionselect-template" type="text/x-handlebars-template">
-      <select>
-	{{#each this}}
-	<option data-key="{{key}}">{{key}}</option>
-	{{/each}}
-      </select>
-    </script>
     <script id="citebox-template" type="text/x-handlebars-template">
       <form>
-	<label for="citetitle">Title:</label>
-	<input id="citetitle" value="{{title}}">
-	{{#each authors}}
-	<label>Author:</label>
-	<input class="citeauthor" value="{{name}}">
-	{{/each}}
+	<div class="full-line">
+	  <label for="citetitle">Book title</label>
+	  <input id="citetitle" value="{{title}}">
+	</div>
+	<div class="full-line">
+	  {{#each authors}}
+	  <div class="firstnamebox">
+	    <label>First name</label>
+	    <input value="{{firstName}}">
+	  </div>
+	  <div class="lastnamebox">
+	    <label>Last name</label>
+	    <input value="{{lastName}}">
+	  </div>
+	  {{/each}}
+	</div>
+	<div class="full-line">
+	  <label for="citecity">City</label>
+	  <input id="citecity">
+	</div>
 	{{#each publishers}}
-	<label for="citepublisher">Publisher:</label>
-	<input id="citepublisher" value="{{name}}">
+	<div class="full-line">
+	  <label for="citepublisher">Publisher</label>
+	  <input id="citepublisher" value="{{name}}">
+	</div>
 	{{/each}}
-	<label for="citepubdate">Publish date:</label>
-	<input id="citepubdate" value="{{publish_date}}">
-	<p>Pages:</p>
-	<label for="citepagestart">Start:</label>
-	<input id="citepagestart">
-	<label for="citepageend">End:</label>
-	<input id="citepageend">
+	<div class="full-line">
+	  <label for="citepubyear">Publish year</label>
+	  <input id="citepubyear" value="{{publish_year}}">
+	</div>
+	<div class="full-line">
+	  <div class="volume">
+	    <label for="citevolume">Volume</label>
+	    <input id="citevolume">
+	  </div>
+	  <div class="edition">
+	    <label for="citeedition">Edition</label>
+	    <input id="citeedition">
+	  </div>
+	  <div class="pages">
+	    <label for="citepages">Pages</label>
+	    <input id="citepages">
+	  </div>
+	</div>
       </form>
-      <button id="backtoresults">Back to results</button>      
+      <div class="buttonbox">
+	<button id="backtoresults">Back to results</button>
+      </div>
     </script>
   </head>
   <body>
-    <div class="searchbox">
-      <label for="titlesearch">Search by title:</label>
-      <input id="titlesearch" placeholder="Search for the name of your book here.">
-      <ul class="suggestions-container titlesearch clearfix"></ul>
-    </div>
-    <div class="card clearfix">
+    <div class="card">
+      <div class="front">
+	<div class="searchbox">
+	  <!-- <label for="titlesearch">Search</label> -->
+	  <input id="titlesearch" placeholder="Search for your book here.">
+	  <ul class="suggestions-container titlesearch clearfix"></ul>
+	</div>
+	<div class="resultsbox"></div>
+      </div>
       <div class="citebox"></div>
-      <div class="resultsbox"></div>
     </div>
     <script src="js/jquery-2.1.1.js"></script>
     <script src="js/handlebars.js"></script>
