@@ -102,7 +102,7 @@ div.resultsbox {
 .loading {
     background-image: url(images/loading_icon.gif);
     background-repeat: no-repeat;
-    background-position: 100% 0;
+    background-position: 95% 50%;
 }
 
 /* citebox styling */
@@ -130,22 +130,23 @@ div.citebox {
 
 .full-line {
     width: 100%;
-}
-
-.full-line>input, .full-line>label {
-    margin: 2%;
+    padding: 2%;
 }
 
 .firstnamebox, .lastnamebox {
     display: inline-block;
     width: 35%;
-    margin: 2%;
 }
 
 .volume, .edition, .pages {
     display: inline-block;
     width: 23%;
-    margin: 2%;
+}
+
+#typeindicator {
+    text-align: center;
+    display: block;
+    width: 80%;
 }
 
 .buttonbox {
