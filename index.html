@@ -20,13 +20,24 @@
 	</li>
 	{{/each}}
       </ul>
-    </script>
-
-    <script id="pageselect-template" type="text/x-handlebars-template">
-      <div class="pageselect clearfix">
-	{{#each this}}<div class="pageselector" data-page="{{page}}">{{page}}</div>{{/each}}
+      <div class="pagenav clearfix">
+	<svg id="leftarrow" class="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+	  <g id="Captions">
+	  </g>
+	  <g id="Your_Icon">
+	    <polygon points="100,48 7.656,48 52.326,3.331 49.497,0.503 2.828,47.172 0,50 2.828,52.828 49.497,99.497 52.325,96.669 7.656,52    100,52  "/>
+	  </g>
+	</svg>
+	<svg id="rightarrow" class="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+	  <g id="Captions">
+	  </g>
+	  <g id="Your_Icon">
+	    <polygon points="97.172,47.172 50.503,0.503 47.674,3.331 92.344,48 0,48 0,52 92.344,52 47.674,96.669 50.503,99.497    97.172,52.828 100,50  "/>
+	  </g>
+	</svg>
       </div>
     </script>
+
     <script id="citebox-template" type="text/x-handlebars-template">
       <form>
 	<div class="full-line">

@@ -5,16 +5,20 @@ $(document).ready(function() {
     function BookSearcher(term) {
 	// do stuff
 	var books = [];
+	var newBooks = [];
 	var currentIndex;
 	
 	var apiOffset = 0;
 	var apiLimit = 100;
-	
+	var apiNumFound;
+	this.moreBooksLeft = false;
+	this.moreBooksRight = false;
 	var self = this;
 	var request;
 
 	// Helper to process book data so that it is suitable for Handlebars.js
 	function processData(data) {
+	    apiNumFound = data.numFound;
 	    if ("docs" in data) {
 		var processed = data.docs.map(function(doc) {
 		    if ("edition_key" in doc) {
@@ -28,6 +32,12 @@ $(document).ready(function() {
 	    }		    
 	}
 
+	// combine books and newBooks array, reset newBooks
+	function updateBooks() {
+	    books = books.concat(newBooks);
+	    newBooks = [];
+	}
+
 	// Encode the search term for use with the openlibrary search API
 	// Remove leading and trailing whitespace, replace whitespace between words
 	// with a plus sign (+)
@@ -37,9 +47,9 @@ $(document).ready(function() {
 	    var res2 = res.replace(/\s+/g, "+");
 	    return res2.replace("'", "%27");
 	}
-
+	
 	// iterate filling up books
-	function getMoreBooks(deferred) {
+	function getMoreBooks(deferred, offset, limit) {
 	    var url = "http://openlibrary.org/search.json?q=" + encodeTerm(term)+"&limit=" + String(apiLimit) + "&offset=" + String(apiOffset);
 	    request = $.getJSON(url, function(data){
 		// ... inside success handler.
@@ -48,36 +58,65 @@ $(document).ready(function() {
 		    var rawBook = rawBooks[i];
 		    if (rawBook) {
 			if ("cover_i" in rawBook)
-			    books.push(rawBook);
-			if (books.length == 50) {
+			    newBooks.push(rawBook);
+			if (newBooks.length == 50) {
 			    i = l;
+			    updateBooks();
+			    pageProcess(offset, limit);
 			    apiOffset += i + 1;
-			    deferred.resolve(books);
+			    deferred.resolve(books.slice(offset, offset+limit));
+			    return;
 			}
 		    }
 		}
-		if (rawBooks.length < apiLimit)
-		    deferred.resolve(books);
+		if (apiOffset + apiLimit > apiNumFound) {
+		    updateBooks();
+		    pageProcess(offset, limit);
+		    deferred.resolve(books.slice(offset, offset+limit));	    
+		}
 		else if (deferred.state() == "pending") {
 		    apiOffset += 100;
-		    getMoreBooks();
+		    getMoreBooks(deferred, offset, limit);
 		}
 	    });
 	}
-	
+
+	function pageProcess (offset, limit) {
+	    if (offset == 0) {
+		self.moreBooksLeft = false;
+	    } else {
+		self.moreBooksLeft = true;
+	    }
+	    if (apiLimit + apiOffset < apiNumFound || offset + limit < books.length) {
+		self.moreBooksRight = true;
+	    } else {
+		self.moreBooksRight = false;
+	    }
+	}
+
 	this.search = function (offset, limit) {
 	    var deferred = $.Deferred();
 	    if (limit + offset <= books.length) {
+		pageProcess(offset, limit);
 		deferred.resolve(books.slice(offset, offset+limit));
 	    } else {
- 		getMoreBooks(deferred);
+ 		getMoreBooks(deferred, offset, limit);
 	    }
+	    setTimeout(function() {
+		self.cancel();
+		updateBooks();
+		pageProcess(offset, limit);
+		deferred.resolve(books.slice(offset, offset+limit));
+	    }, 10000);
+	    pageProcess(offset, limit);
 	    return deferred.promise();
 	}
 
 	this.cancel = function () {
-	    if (request)
+	    if (request) {
+		console.log("getJSON aborted");
 		request.abort();
+	    }
 	}
     }
 
@@ -111,7 +150,6 @@ $(document).ready(function() {
 
     // Compile Handlebars.js templates
     var resultsTemplate = Handlebars.compile($("#searchresults-template").html());
-    var pageselectTemplate = Handlebars.compile($("#pageselect-template").html());
     var citeboxTemplate = Handlebars.compile($("#citebox-template").html());
     
     // Declare variable ensuring that slideDown effect only occurs once.
@@ -120,37 +158,58 @@ $(document).ready(function() {
     // Variable allowing all listeners to access array of books
     var searchResults;
 
-    // Allow all listeners to access searcher
+    // Allow all listeners to access searcher, offset, and limit
     var searcher;
+    var offset;
+    var limit = 10;
 
     // Helper to update array of search results and add them to the DOM
     function compile(books) {
-	searchresults = books;
+	$(".arrow").removeClass("active");
+	searchResults = books;
+	$resultsbox.empty();
 	$resultsbox.append(resultsTemplate(books));
+	if (searcher.moreBooksLeft)
+	    $("#leftarrow").attr("class", "arrow active");
+	if (searcher.moreBooksRight)
+	    $("#rightarrow").attr("class", "arrow active");
+	$resultsbox.slideDown();
 	$searchfield.removeClass("loading");
     }
     // Function that executes search with keystrokes in the search input.
     $searchfield.on("keyup", function() {
-	var thisHolder = $(this);
-	if (thisHolder.val().length < 2) {
-	    $resultsbox.empty();
-	    $card.removeClass("flip");
+	$resultsbox.slideUp();
+	if ($searchfield.val().length < 2) {
+	    $resultsbox.empty();	    
 	    return;
 	}
 	// Timer calls search if no keystrokes for 500ms
 	clearTimeout(timer);
 	timer = setTimeout(function() {
 	    // Add loading animation
-	    thisHolder.addClass("loading");
+	    $searchfield.addClass("loading");
 	    // Send JSON request
 	    console.log("New request sent");
 	    if (searcher)
 		searcher.cancel();
 	    searcher = new BookSearcher($searchfield.val());
-	    searcher.search(0, 10).then(compile);		    
+	    offset = 0;
+	    searcher.search(offset, limit).then(compile);		    
 	}, 500);
     });
 
+    // Listener functions for page navigation
+    $resultsbox.on("click", "#leftarrow.active", function() {
+	$searchfield.addClass("loading");
+	offset = Math.max(offset - limit, 0);
+	searcher.search(offset, limit).then(compile);
+    });
+    $resultsbox.on("click", "#rightarrow.active", function() {
+	$searchfield.addClass("loading");
+	offset += limit;
+	searcher.search(offset, limit).then(compile);
+    });
+    
     // Function handling what happens when a search result is clicked
     $resultsbox.on("click", "li", function() {
 	// Determine which book was clicked, fetch book data from API using its key
@@ -177,24 +236,6 @@ $(document).ready(function() {
     // Listener function for "Back to results" button
     $citebox.on("click", "button", function() {
 	$card.removeClass("flip");
-    });
-
-    // Listener function for page selector in search results
-    $resultsbox.on("click", ".pageselector", function() {
-	var offset = String((+$(this).data("page") - 1) * 5);
-	var url = "http://openlibrary.org/search.json?q=" + encodeTerm($searchfield.val())+"&limit=5&offset=" + offset;
-	$(".pageselector").removeClass("highlight");
-	$(this).addClass("highlight");
-	$searchfield.addClass("loading");
-	$.getJSON(url, function(data) {
-	    
-	    // Use remove instead of empty in this instance to avoid removing the page selector within resultsbox
-	    $resultsbox.find("ul").remove();
-	    books = processData(data);
-	    // Add search results to beginning of $resultsbox, before pageselector
-	    $resultsbox.prepend(resultsTemplate(books));
-	    $searchfield.removeClass("loading");
-	});
     });
 
     // Listener for citetype slider in $citebox
