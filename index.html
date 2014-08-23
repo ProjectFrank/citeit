@@ -1,9 +1,19 @@
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
   <head>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="style.css">
-    <title>OpenLib API Practice</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Cite It!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet'>
 
     <script id="searchresults-template" type="text/x-handlebars-template">
       <ul>
@@ -22,18 +32,18 @@
       </ul>
       <div class="pagenav clearfix">
 	<a href="#results-top"><svg id="leftarrow" class="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
-	  <g id="Captions">
-	  </g>
-	  <g id="Your_Icon">
-	    <polygon points="100,48 7.656,48 52.326,3.331 49.497,0.503 2.828,47.172 0,50 2.828,52.828 49.497,99.497 52.325,96.669 7.656,52    100,52  "/>
-	  </g>
+	    <g id="Captions">
+	    </g>
+	    <g id="Your_Icon">
+	      <polygon points="100,48 7.656,48 52.326,3.331 49.497,0.503 2.828,47.172 0,50 2.828,52.828 49.497,99.497 52.325,96.669 7.656,52    100,52  "/>
+	    </g>
 	</svg></a>
 	<a href="#results-top"><svg id="rightarrow" class="arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
-	  <g id="Captions">
-	  </g>
-	  <g id="Your_Icon">
-	    <polygon points="97.172,47.172 50.503,0.503 47.674,3.331 92.344,48 0,48 0,52 92.344,52 47.674,96.669 50.503,99.497    97.172,52.828 100,50  "/>
-	  </g>
+	    <g id="Captions">
+	    </g>
+	    <g id="Your_Icon">
+	      <polygon points="97.172,47.172 50.503,0.503 47.674,3.331 92.344,48 0,48 0,52 92.344,52 47.674,96.669 50.503,99.497    97.172,52.828 100,50  "/>
+	    </g>
 	</svg></a>
       </div>
     </script>
@@ -95,8 +105,12 @@
 	<button id="backtoresults">Back to results</button>
       </div>
     </script>
+
   </head>
   <body>
+    <!--[if lt IE 7]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
     <div class="card">
       <div class="front">
 	<div class="searchbox">
@@ -108,8 +122,11 @@
       </div>
       <div class="citebox"></div>
     </div>
-    <script src="js/jquery-2.1.1.js"></script>
-    <script src="js/handlebars.js"></script>
+
+    <script src="js/vendor/jquery-2.1.1.js"></script>
+    <script src="js/Handlebars.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/application.js"></script>
   </body>
 </html>

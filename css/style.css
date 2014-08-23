@@ -143,7 +143,7 @@ div.resultsbox {
 
 /* Loading spinner */
 .loading {
-    background-image: url(images/loading_icon.gif);
+    background-image: url(../images/loading_icon.gif);
     background-repeat: no-repeat;
     background-position: 95% 50%;
 }
@@ -167,7 +167,7 @@ form {
     float: right;
  }
  
-.citebox label, input {
+.citebox label, .citebox input {
     display: block;
     width: 80%;
 }
@@ -210,6 +210,10 @@ form {
 .buttonbox {
     clear: both;
     padding-top: 1rem;
+}
+
+button {
+    font-family: "Open Sans", sans-serif;
 }
 
 #backtoresults {
