@@ -69,6 +69,10 @@ div.cover {
     float: right;
 }
 
+div.cover img {
+    max-width: 100%;
+}
+
 .resultsbox li:hover {
     background: #aaa;
 }
@@ -107,6 +111,7 @@ div.resultsbox {
 
 .pagenav {
     width: 20%;
+    min-width: 200px;
     margin: auto;
 }
 
@@ -122,10 +127,12 @@ div.resultsbox {
     height: 50px;
     width: 50px;
     fill: #aaa;
+    pointer-events: none;
 }
 
 .arrow.active {
     fill: black;
+    pointer-events: auto;
 }
 
 .arrow.active:hover {
@@ -171,7 +178,7 @@ form {
 
 
 .citebox img {
-    height: 90%;
+    max-height: 90%;
     max-width: 50%;
     float: left;
 }

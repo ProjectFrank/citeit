@@ -71,6 +71,7 @@ $(document).ready(function() {
 		}
 		if (apiOffset + apiLimit > apiNumFound) {
 		    updateBooks();
+		    apiOffset = apiNumFound;
 		    pageProcess(offset, limit);
 		    deferred.resolve(books.slice(offset, offset+limit));	    
 		}
@@ -96,7 +97,7 @@ $(document).ready(function() {
 
 	this.search = function (offset, limit) {
 	    var deferred = $.Deferred();
-	    if (limit + offset <= books.length) {
+	    if (limit + offset <= books.length || apiLimit + apiOffset >= apiNumFound) {
 		pageProcess(offset, limit);
 		deferred.resolve(books.slice(offset, offset+limit));
 	    } else {
@@ -201,11 +202,13 @@ $(document).ready(function() {
     // Listener functions for page navigation
     $resultsbox.on("click", "#leftarrow.active", function() {
 	$searchfield.addClass("loading");
+	$("#leftarrow").attr("class", "arrow");
 	offset = Math.max(offset - limit, 0);
 	searcher.search(offset, limit).then(compile);
     });
     $resultsbox.on("click", "#rightarrow.active", function() {
 	$searchfield.addClass("loading");
+	$("#rightarrow").attr("class", "arrow");
 	offset += limit;
 	searcher.search(offset, limit).then(compile);
     });
