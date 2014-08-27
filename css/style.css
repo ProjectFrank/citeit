@@ -43,6 +43,15 @@ header h1 {
 
 header a {
     text-decoration: none;
+    color: #551A8B;
+}
+
+header a:hover {
+    color: #f00;
+}
+
+header svg:hover {
+    fill: #f00;
 }
 
 .front {
@@ -196,13 +205,9 @@ form {
  
 .citebox label, .citebox input {
     display: block;
-    width: 80%;
+    width: 100%;
+    padding: 0;
 }
-
-.citebox input {
-    padding: 0.5rem;
-}
-
 
 .citebox img {
     max-height: 90%;
@@ -213,25 +218,43 @@ form {
 
 .full-line {
     width: 100%;
-    padding: 0 2%;
+    padding: 0.5% 2%;
     height: 12.5%;
     overflow: hidden;
 }
 
-.firstnamebox, .lastnamebox {
+.full-line>div {
     display: inline-block;
-    width: 43.9%;
 }
 
-.volume, .edition, .pages {
-    display: inline-block;
-    width: 27.95%;
+.halfbox {
+    width: 49%;
+}
+
+.halfbox:first-child {
+    padding-right: 1px;
+}
+
+.halfbox:last-child {
+    padding-left: 1px;
+}
+
+.fullbox {
+    width: 98%;
+}
+
+.chapter {
+    width: 68%;
+}
+
+.pages {
+    width: 30%;
 }
 
 #typeindicator {
     text-align: center;
     display: block;
-    width: 80%;
+    width: 100%;
     margin: 0;
 }
 
@@ -242,6 +265,10 @@ form {
 
 button {
     font-family: "Open Sans", sans-serif;
+}
+
+.italic {
+    font-style: italic;
 }
 
 #backtoresults {
@@ -289,7 +316,7 @@ button {
 	width: 100%;
     }
 
-    .firstnamebox, .lastnamebox {
+    .firstname, .lastname {
 	width: 49.65%;
     }
 
@@ -299,10 +326,6 @@ button {
 
     .volume, .edition, .pages {
 	width: 32.6%;
-    }
-
-    #typeindicator {
-	width: 100%;
     }
 }
 

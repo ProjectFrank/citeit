@@ -5,11 +5,11 @@ $(document).ready(function() {
     function BookSearcher(term) {
 	// do stuff
 	var books = [];
+	var deferred;
 	var newBooks = [];
 	var currentIndex;
-	
 	var apiOffset = 0;
-	var apiLimit = 100;
+	var apiLimit = 30;
 	var apiNumFound;
 	this.moreBooksLeft = false;
 	this.moreBooksRight = false;
@@ -49,7 +49,7 @@ $(document).ready(function() {
 	}
 	
 	// iterate filling up books
-	function getMoreBooks(deferred, offset, limit) {
+	function getMoreBooks(offset, limit) {
 	    var url = "http://openlibrary.org/search.json?q=" + encodeTerm(term)+"&limit=" + String(apiLimit) + "&offset=" + String(apiOffset);
 	    request = $.getJSON(url, function(data){
 		// ... inside success handler.
@@ -59,7 +59,7 @@ $(document).ready(function() {
 		    if (rawBook) {
 			if ("cover_i" in rawBook)
 			    newBooks.push(rawBook);
-			if (newBooks.length == 50) {
+			if (newBooks.length == 10) {
 			    i = l;
 			    updateBooks();
 			    pageProcess(offset, limit);
@@ -76,8 +76,8 @@ $(document).ready(function() {
 		    deferred.resolve(books.slice(offset, offset+limit));	    
 		}
 		else if (deferred.state() == "pending") {
-		    apiOffset += 100;
-		    getMoreBooks(deferred, offset, limit);
+		    apiOffset += apiLimit;
+		    getMoreBooks(offset, limit);
 		}
 	    });
 	}
@@ -96,12 +96,12 @@ $(document).ready(function() {
 	}
 
 	this.search = function (offset, limit) {
-	    var deferred = $.Deferred();
+	    deferred = $.Deferred();
 	    if (limit + offset <= books.length || apiLimit + apiOffset >= apiNumFound) {
 		pageProcess(offset, limit);
 		deferred.resolve(books.slice(offset, offset+limit));
 	    } else {
- 		getMoreBooks(deferred, offset, limit);
+ 		getMoreBooks(offset, limit);
 	    }
 	    setTimeout(function() {
 		self.cancel();
@@ -115,12 +115,116 @@ $(document).ready(function() {
 
 	this.cancel = function () {
 	    if (request) {
-		console.log("getJSON aborted");
 		request.abort();
+		deferred.reject();
 	    }
 	}
     }
 
+    // Object containing everything relating to making the citation
+    function Citation(info) {
+	function capitalize(value) {
+	    var index;
+	    var character;
+	    value = trimWhiteSpace(value).toLowerCase();
+	    while ((index = value.search(/(^|\s+)([a-z])/)) >= 0) {
+		while ((character = value.charAt(index)) == " ")
+		    index++;
+		value = value.slice(0, index) + character.toUpperCase() + value.substr(index + 1);
+	    }
+	    return value;
+	}
+
+	function trimWhiteSpace(value) {
+	    return value.replace(/^\s+|\s+$/g, "");
+	}
+
+	function capitalizeFirstWord(value) {
+	    value = trimWhiteSpace(value).toLowerCase();
+	    return value.charAt(0).toUpperCase() + value.substr(1);
+	}
+
+	function initialize(value) {
+	    var capitalized = capitalize(value);
+	    return capitalized.replace(/(^|\s+)(\w)\w*($|\s+)/g, "$1$2.$3")
+	}
+
+	if (info.type == 1) {
+	    this.citation = mla();
+	} else if (info.type == 2) {
+	    this.citation = apa();
+	} else {
+	    this.citation = chicago();
+	}
+	
+
+	function apa() {
+	    var result = ["", "", ""];
+	    result[0] += capitalize(info.lastName) + ", ";
+	    if (info.firstName)
+		result[0] += initialize(info.firstName) + " ";
+	    if (info.year) {
+		result[0] += "(" + info.year + "). ";
+	    } else {
+		result[0] += "(n.d.). ";
+	    }
+	    if (info.chapter)
+		result[0] += capitalizeFirstWord(info.chapter) + " In ";
+	    result[1] += capitalizeFirstWord(info.title) + " ";
+	    if (info.edition || info.volume || info.pages) {
+		var edVolPages = [];
+		result[2] += "(";
+		if (info.edition)
+		    edVolPages.push("Edition " + info.edition + ".");
+		if (info.volume)
+		    edVolPages.push("Vol. " + capitalizeFirstWord(info.volume));
+		if (info.pages)
+		    edVolPages.push("p. " + capitalizeFirstWord(info.pages));
+		result[2] += edVolPages.join(", ");
+		result[2] += "), ";
+	    }
+	    if (info.city)
+		result[2] += capitalize(info.city) + ": ";
+	    if (info.publisher)
+		result[2] += capitalize(info.publisher) + ". ";
+	    return result;
+	}
+
+	function mla() {
+	    var result = ["", "", ""];
+	    result[0] += capitalize(info.lastName);
+	    if (info.firstName)
+		result[0] += ", " + capitalize(info.firstName) + ".";
+	    if (info.chapter)
+		result[0] += " \"" + capitalize(info.chapter) + ".\" ";
+	    result[1] += " " + capitalize(info.title) + ". ";
+	    if (info.edition)
+		result[2] += capitalize(info.edition) + " ed .";
+	    if (info.volume)
+		result[2] += "Vol. " + capitalize(info.volume) + ". ";
+	    if (info.city)
+		result[2] += capitalize(info.city) + ": ";
+	    if (info.publisher) {
+		var pub = info.publisher.replace(/^(an*|the)/i, "");
+		pub = pub.replace(/\s+(co(mpany)?|corp(oration)?|inc(orporated)?|ltd|limited)\.?(\b|$)/gi, "");
+		pub = pub.replace(/\b(books?|house|press|publisher)(\s*|$)/ig, "$2");
+		pub = pub.replace(/^\s+|\s+$/g, "");
+		result[2] += capitalize(pub) + ",";
+	    }
+	    if (info.year)
+		result[2] += " " + info.year;
+	    result[2] += ".";
+	    if (info.pages)
+		result[2] += " " + capitalize(info.pages) + ".";
+	    result[2] += " Print.";
+	    return result;
+	}
+
+	function chicago() {
+	    var result = ["", "", ""];
+	}
+    }
+    
     // Helper function to split authors and parse out publishing date.
     function processBook(book) {
 	if ("authors" in book) {
@@ -153,16 +257,22 @@ $(document).ready(function() {
     var resultsTemplate = Handlebars.compile($("#searchresults-template").html());
     var citeboxTemplate = Handlebars.compile($("#citebox-template").html());
     
-    // Declare variable ensuring that slideDown effect only occurs once.
-    var slid;
 
     // Variable allowing all listeners to access array of books
     var searchResults;
 
     // Allow all listeners to access searcher, offset, and limit
     var searcher;
+    var searchTerm;
     var offset;
     var limit = 10;
+
+    var searchers = {};
+    function getSearcher(term) {
+	if (!(searchers.hasOwnProperty(term)))
+	    searchers[term] = new BookSearcher(term);
+	return searchers[term];
+    }
 
     // Helper to update array of search results and add them to the DOM
     function compile(books) {
@@ -177,11 +287,18 @@ $(document).ready(function() {
 	$resultsbox.slideDown();
 	$searchfield.removeClass("loading");
     }
+
+    function removeWhiteSpace(value) {
+	    return value.replace(/^\s+|\s+$/g, "");
+    }
+    
     // Function that executes search with keystrokes in the search input.
-    $searchfield.on("keyup", function() {
+    $searchfield.on("input", function() {
+	if (searchTerm == $searchfield.val())
+	    return;
 	$resultsbox.slideUp();
 	if ($searchfield.val().length < 2) {
-	    $resultsbox.empty();	    
+	    $resultsbox.empty();
 	    return;
 	}
 	// Timer calls search if no keystrokes for 500ms
@@ -190,10 +307,10 @@ $(document).ready(function() {
 	    // Add loading animation
 	    $searchfield.addClass("loading");
 	    // Send JSON request
-	    console.log("New request sent");
 	    if (searcher)
 		searcher.cancel();
-	    searcher = new BookSearcher($searchfield.val());
+	    searchTerm = removeWhiteSpace($searchfield.val());
+	    searcher = getSearcher(searchTerm);
 	    offset = 0;
 	    searcher.search(offset, limit).then(compile);		    
 	}, 500);
@@ -212,8 +329,17 @@ $(document).ready(function() {
 	offset += limit;
 	searcher.search(offset, limit).then(compile);
     });
-    
-    // Function handling what happens when a search result is clicked
+
+
+    // Helper function for adding citation to the DOM
+    function addCite(citation) {
+	$citation = $("#citation");
+	$citation.empty();
+	$citation.append(citation.citation[0]);
+	$citation.append("<span class=\"italic\">" + citation.citation[1] + "</span>");
+	$citation.append(citation.citation[2]);
+    }
+    // Listener handling what happens when a search result is clicked
     $resultsbox.on("click", "li", function() {
 	// Determine which book was clicked, fetch book data from API using its key
 	var key = $(this).data("key");
@@ -221,21 +347,49 @@ $(document).ready(function() {
 	$searchfield.addClass("loading");
 	$.getScript(selectedBook.url, function() {
 	    var book = processBook(_OLBookInfo["OLID:" + selectedBook.olid]);
-	    var edition_keys = selectedBook.edition_key.map(function(editionKey) {
-		return {"key": editionKey};
-	    });
 	    // Empty and generate new $citebox content
 	    $citebox.empty();
-	    $citebox.append("<img src=\"http://covers.openlibrary.org/b/id/" + selectedBook["cover_i"] + "-L.jpg\"/>");
+	    $citebox.append("<img src=\"http://covers.openlibrary.org/b/id/" + selectedBook.cover_i + "-L.jpg\" />");
+	    
 	    $citebox.append(citeboxTemplate(book));
+	    var info = {};
+	    info.title = book.title;
+	    info.firstName = book.authors[0].firstName;
+	    info.lastName = book.authors[0].lastName;
+	    if (book.publish_places)
+		info.city = book.publish_places[0].name;
+	    if (book.publishers)
+		info.publisher = book.publishers[0].name;
+	    if (book.publish_year)
+		info.year = book.publish_year;
+	    info.type = 2;
 
+	    var citation = new Citation(info);
+	    addCite(citation);
 	    // Reveal $citebox
 	    $card.addClass("flip");
-
 	    $searchfield.removeClass("loading");
 	});
     });
 
+    // Listener function for changes to citebox fields
+    $citebox.on("input change", "input", function() {
+	var info = {};
+	info.title = $("#citetitle").val();
+	info.firstName = $("#firstname").val();
+	info.lastName = $("#lastname").val();
+	info.city = $("#citecity").val();
+	info.publisher = $("#citepublisher").val();
+	info.year = $("#citepubyear").val();
+	info.volume = $("#citevolume").val();
+	info.edition = $("#citeedition").val();
+	info.chapter = $("#citechapter").val();
+	info.pages = $("#citepages").val();
+	info.type = $("#citetype").val();
+	var citation = new Citation(info)
+	addCite(citation);
+    });
+    
     // Listener function for "Back to results" button
     $citebox.on("click", "button", function() {
 	$card.removeClass("flip");
@@ -248,7 +402,7 @@ $(document).ready(function() {
 	if (data == 1)	    
 	    indicator.text("MLA");
 	else if (data == 2)
-	    indicator.text("ALA");
+	    indicator.text("APA");
 	else
 	    indicator.text("Chicago");
     });
