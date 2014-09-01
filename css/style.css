@@ -1,0 +1,339 @@
+/* line 1, /Users/frankwang/src/cite-it/source/css/style.scss */
+* {
+  box-sizing: border-box; }
+
+/* line 5, /Users/frankwang/src/cite-it/source/css/style.scss */
+html {
+  height: 100%; }
+
+/* line 9, /Users/frankwang/src/cite-it/source/css/style.scss */
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #eef;
+  perspective: 700px;
+  height: 100%;
+  min-height: 600px; }
+
+/* line 17, /Users/frankwang/src/cite-it/source/css/style.scss */
+input {
+  font-family: 'Open Sans';
+  padding: 1rem; }
+
+/* line 22, /Users/frankwang/src/cite-it/source/css/style.scss */
+header {
+  font-family: 'Permanent Marker';
+  text-align: center;
+  line-height: 120px;
+  height: 120px; }
+
+/* line 29, /Users/frankwang/src/cite-it/source/css/style.scss */
+header svg {
+  display: inline-block;
+  height: 120px;
+  width: 120px;
+  fill: #551A8B; }
+
+/* line 36, /Users/frankwang/src/cite-it/source/css/style.scss */
+header h1 {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: 5rem;
+  vertical-align: top; }
+
+/* line 44, /Users/frankwang/src/cite-it/source/css/style.scss */
+header a {
+  text-decoration: none;
+  color: #551A8B; }
+
+/* line 49, /Users/frankwang/src/cite-it/source/css/style.scss */
+header a:hover {
+  color: #f00; }
+
+/* line 53, /Users/frankwang/src/cite-it/source/css/style.scss */
+header svg:hover {
+  fill: #f00; }
+
+/* line 57, /Users/frankwang/src/cite-it/source/css/style.scss */
+.front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  backface-visibility: hidden; }
+
+/* line 67, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.searchbox {
+  margin: auto;
+  width: 100%;
+  height: 20%;
+  text-align: center;
+  background: #eef;
+  padding: 1rem;
+  backface-visibility: hidden; }
+
+/* line 77, /Users/frankwang/src/cite-it/source/css/style.scss */
+.searchbox input {
+  width: 50%;
+  margin: auto;
+  font-size: 1rem;
+  text-align: center; }
+
+/* line 84, /Users/frankwang/src/cite-it/source/css/style.scss */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0; }
+
+/* Search results formatting */
+/* line 91, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.title {
+  width: 50%; }
+
+/* line 95, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.author {
+  width: 40%; }
+
+/* line 99, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.language {
+  width: 20%; }
+
+/* line 103, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.cover {
+  width: 10%;
+  float: right; }
+
+/* line 108, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.cover img {
+  max-width: 100%; }
+
+/* line 112, /Users/frankwang/src/cite-it/source/css/style.scss */
+.resultsbox li:hover {
+  background: #aaa; }
+
+/* line 116, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.resultsbox {
+  width: 100%;
+  background: #fff;
+  height: 80%;
+  padding: 2%;
+  display: none;
+  overflow: scroll;
+  backface-visibility: hidden; }
+
+/* line 126, /Users/frankwang/src/cite-it/source/css/style.scss */
+.resultsbox li > div {
+  display: block;
+  float: left;
+  height: 58px;
+  line-height: 58px; }
+
+/* line 133, /Users/frankwang/src/cite-it/source/css/style.scss */
+.resultsbox li {
+  overflow: hidden;
+  height: 58px;
+  padding: 5px 0;
+  background: #fff; }
+
+/* line 140, /Users/frankwang/src/cite-it/source/css/style.scss */
+.resultsbox li:first-child {
+  font-weight: bold; }
+
+/* line 144, /Users/frankwang/src/cite-it/source/css/style.scss */
+.resultsbox li:first-child:hover {
+  background: #fff; }
+
+/* line 148, /Users/frankwang/src/cite-it/source/css/style.scss */
+.pagenav {
+  width: 20%;
+  min-width: 200px;
+  margin: auto; }
+
+/* line 154, /Users/frankwang/src/cite-it/source/css/style.scss */
+#leftarrow {
+  float: left; }
+
+/* line 158, /Users/frankwang/src/cite-it/source/css/style.scss */
+#rightarrow {
+  float: right; }
+
+/* line 162, /Users/frankwang/src/cite-it/source/css/style.scss */
+.arrow {
+  height: 50px;
+  width: 50px;
+  fill: #aaa;
+  pointer-events: none; }
+
+/* line 169, /Users/frankwang/src/cite-it/source/css/style.scss */
+.arrow.active {
+  fill: black;
+  pointer-events: auto; }
+
+/* line 174, /Users/frankwang/src/cite-it/source/css/style.scss */
+.arrow.active:hover {
+  fill: red; }
+
+/* Loading spinner */
+/* line 181, /Users/frankwang/src/cite-it/source/css/style.scss */
+.loading {
+  background-image: url("../img/loading_icon.gif");
+  background-repeat: no-repeat;
+  background-position: 95% 50%; }
+
+/* citebox styling */
+/* line 188, /Users/frankwang/src/cite-it/source/css/style.scss */
+div.citebox {
+  width: 100%;
+  height: 100%;
+  padding: 2%;
+  transform: rotateY(180deg);
+  background: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  backface-visibility: hidden; }
+
+/* line 201, /Users/frankwang/src/cite-it/source/css/style.scss */
+form {
+  width: 50%;
+  float: right; }
+
+/* line 206, /Users/frankwang/src/cite-it/source/css/style.scss */
+.citebox label, .citebox input {
+  display: block;
+  width: 100%;
+  padding: 0; }
+
+/* line 212, /Users/frankwang/src/cite-it/source/css/style.scss */
+.citebox img {
+  max-height: 90%;
+  max-width: 50%;
+  min-width: 40%;
+  float: left; }
+
+/* line 219, /Users/frankwang/src/cite-it/source/css/style.scss */
+.full-line {
+  width: 100%;
+  padding: 0.5% 2%;
+  height: 12.5%;
+  overflow: hidden; }
+
+/* line 226, /Users/frankwang/src/cite-it/source/css/style.scss */
+.full-line > div {
+  display: inline-block; }
+
+/* line 230, /Users/frankwang/src/cite-it/source/css/style.scss */
+.halfbox {
+  width: 49%; }
+
+/* line 234, /Users/frankwang/src/cite-it/source/css/style.scss */
+.halfbox:first-child {
+  padding-right: 1px; }
+
+/* line 238, /Users/frankwang/src/cite-it/source/css/style.scss */
+.halfbox:last-child {
+  padding-left: 1px; }
+
+/* line 242, /Users/frankwang/src/cite-it/source/css/style.scss */
+.fullbox {
+  width: 98%; }
+
+/* line 246, /Users/frankwang/src/cite-it/source/css/style.scss */
+.chapter {
+  width: 68%; }
+
+/* line 250, /Users/frankwang/src/cite-it/source/css/style.scss */
+.pages {
+  width: 30%; }
+
+/* line 254, /Users/frankwang/src/cite-it/source/css/style.scss */
+#typeindicator {
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin: 0; }
+
+/* line 261, /Users/frankwang/src/cite-it/source/css/style.scss */
+.buttonbox {
+  clear: both;
+  padding-top: 1rem; }
+
+/* line 266, /Users/frankwang/src/cite-it/source/css/style.scss */
+button {
+  font-family: "Open Sans", sans-serif; }
+
+/* line 270, /Users/frankwang/src/cite-it/source/css/style.scss */
+.italic {
+  font-style: italic; }
+
+/* line 274, /Users/frankwang/src/cite-it/source/css/style.scss */
+#backtoresults {
+  display: block;
+  margin: auto; }
+
+/* Flip effect stuff */
+/* line 280, /Users/frankwang/src/cite-it/source/css/style.scss */
+.card {
+  width: 80%;
+  min-width: 320px;
+  height: 80%;
+  margin: auto;
+  transition: all 1s ease;
+  transform-style: preserve-3d;
+  position: relative; }
+
+/* line 290, /Users/frankwang/src/cite-it/source/css/style.scss */
+.flip {
+  transform: rotateY(180deg); }
+
+/* line 294, /Users/frankwang/src/cite-it/source/css/style.scss */
+.flip360 {
+  transform: rotateY(360deg); }
+
+@media (max-width: 800px) {
+  /* line 299, /Users/frankwang/src/cite-it/source/css/style.scss */
+  html {
+    font-size: 12px; }
+
+  /* line 303, /Users/frankwang/src/cite-it/source/css/style.scss */
+  header h1 {
+    font-size: 4rem; }
+
+  /* line 307, /Users/frankwang/src/cite-it/source/css/style.scss */
+  .searchbox input {
+    width: 80%; }
+
+  /* line 311, /Users/frankwang/src/cite-it/source/css/style.scss */
+  .citebox img {
+    display: none; }
+
+  /* line 315, /Users/frankwang/src/cite-it/source/css/style.scss */
+  .citebox form {
+    width: 100%; }
+
+  /* line 319, /Users/frankwang/src/cite-it/source/css/style.scss */
+  .firstname, .lastname {
+    width: 49.65%; }
+
+  /* line 323, /Users/frankwang/src/cite-it/source/css/style.scss */
+  .citebox label, .citebox input {
+    width: 100%; }
+
+  /* line 327, /Users/frankwang/src/cite-it/source/css/style.scss */
+  .volume, .edition, .pages {
+    width: 32.6%; } }
+/* clearfix */
+/* line 333, /Users/frankwang/src/cite-it/source/css/style.scss */
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */ }
+
+/* line 339, /Users/frankwang/src/cite-it/source/css/style.scss */
+.clearfix:after {
+  clear: both; }
