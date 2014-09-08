@@ -222,6 +222,28 @@ $(document).ready(function() {
 
 	function chicago() {
 	    var result = ["", "", ""];
+	    result[0] += capitalize(info.lastName);
+	    if (info.firstName)
+		result[0] += ", " + capitalize(info.firstName);
+	    result[0] += ". ";
+	    if (info.chapter)
+		result[0] += "\"" + capitalize(info.chapter) + ".\" In ";
+	    result[1] += capitalize(info.title);
+	    if (info.pages)
+		result[2] += ", " + info.pages.toLowerCase();
+	    result[2] += ". ";
+	    if (info.edition)
+		result[2] += capitalize(info.edition) + " ed. ";
+	    if (info.volume)
+		result[2] += "Vol. " + capitalize(info.volume) + ". ";
+	    if (info.city)
+		result[2] += capitalize(info.city) + ": ";
+	    if (info.publisher)
+		result[2] += capitalize(info.publisher) + ", ";
+	    if (info.year)
+		result[2] += info.year;
+	    result[2] += ".";
+	    return result;
 	}
     }
     
